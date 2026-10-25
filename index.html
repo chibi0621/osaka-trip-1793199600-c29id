@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>大阪散步帖｜我的 6 天</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#F27BA0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="大阪散步帖">
+<link rel="apple-touch-icon" href="img/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFF4F7; --card:#FFFFFF; --ink:#4B3740; --ink2:#8A6C78; --line:#F2D3DE;
+  --accent:#F27BA0; --accent2:#9BC8F2; --soft:#FFE6EE; --land:#FFF9FB; --water:#DCEFFC;
+  --path:#F27BA0; --walked:#D9467A; --chip:#FFF0F5; --night:#5B4BC4;
+  --banner:url("img/banner-pink.jpg");
+}
+:root[data-theme="lilac"]{
+  --bg:#F6F2FC; --ink:#3F3752; --ink2:#7A6E93; --line:#E2D8F2;
+  --accent:#A788D8; --accent2:#F4A9C4; --soft:#EEE6FA; --land:#FCFAFF; --water:#E2F0FB;
+  --path:#A788D8; --walked:#7B57BF; --chip:#F3EEFB;
+  --banner:url("img/banner-lilac.jpg");
+}
+*{box-sizing:border-box}
+html{color-scheme:light}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Zen Maru Gothic","PingFang TC","Microsoft JhengHei","Noto Sans TC",sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;
+  padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:16px}
+header.hero{position:relative;border-radius:22px;overflow:hidden;background:var(--banner) center 38%/cover no-repeat,var(--soft);aspect-ratio:2/1;width:100%;box-shadow:0 6px 0 var(--line)}
+@media (max-width:700px){header.hero{aspect-ratio:16/11;background-position:center 30%}}
+.hero .tag{position:absolute;left:14px;bottom:14px;right:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;justify-content:space-between}
+.hero h1{margin:0;font-size:clamp(20px,4.2vw,34px);font-weight:900;background:rgba(255,255,255,.9);border-radius:14px;padding:4px 14px;letter-spacing:1px}
+.hero .sub{background:rgba(255,255,255,.9);border-radius:999px;padding:3px 12px;font-size:13px;font-weight:700;color:var(--ink2)}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 6px}
+.btn{font:inherit;font-weight:700;font-size:14px;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:7px 14px;cursor:pointer;min-height:40px}
+.btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn:focus-visible,.day:focus-visible{outline:3px solid var(--accent2);outline-offset:2px}
+nav.days{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:8px;padding:8px 2px 10px}
+@media (max-width:520px){nav.days{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.day{min-width:0;font:inherit;border:2px dashed var(--line);background:var(--card);color:var(--ink);border-radius:16px;padding:6px 12px 6px 8px;cursor:pointer;text-align:left;display:flex;gap:8px;align-items:center}
+.day img{height:40px;width:40px;object-fit:contain}
+.day b{display:block;font-size:14.5px;line-height:1.35}
+.day span{display:block;font-size:12px;color:var(--ink2);line-height:1.35}
+.day[aria-selected="true"]{border-style:solid;border-color:var(--accent);background:var(--soft)}
+.grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:14px}
+.daytitle{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;margin:0 0 8px}
+.daytitle h2{margin:0;font-size:20px;font-weight:900}
+.daytitle span{color:var(--ink2);font-size:13px;font-weight:700}
+svg#map{width:100%;height:auto;display:block;border-radius:16px;background:var(--land)}
+.pin circle.dot{fill:#fff;stroke:var(--accent);stroke-width:3}
+.pin.done circle.dot{fill:var(--soft)}
+.pin.now circle.dot{fill:var(--accent);stroke:#fff}
+.lbl{font-size:23px;font-weight:900;fill:var(--ink);paint-order:stroke;stroke:#fff;stroke-width:6px;stroke-linejoin:round}
+.pin .emo{font-size:22px}
+.pin.now .ring{animation:pulse 1.4s ease-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes pulse{from{opacity:.7;transform:scale(1)}to{opacity:0;transform:scale(2.2)}}
+.seg-base{fill:none;stroke:var(--path);stroke-width:4;stroke-linecap:round;stroke-dasharray:2 9;opacity:.45}
+.seg-walk{fill:none;stroke:var(--walked);stroke-width:5;stroke-linecap:round}
+.seg-lbl{font-size:19px;font-weight:700;fill:var(--ink2);paint-order:stroke;stroke:#fff;stroke-width:5px}
+.controls{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+.clock{font-size:26px;font-weight:900;min-width:76px;font-variant-numeric:tabular-nums}
+.controls input[type=range]{flex:1;min-width:150px;accent-color:var(--accent);height:32px}
+.round{width:44px;height:44px;border-radius:50%;padding:0;font-size:16px}
+.status{margin-top:8px;background:var(--chip);border-radius:14px;padding:6px 12px;font-weight:700;font-size:14px;min-height:52px;display:flex;align-items:center;gap:10px}
+.status img{height:44px;width:44px;object-fit:contain;flex:none}
+ol.stops{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.stop{border:2px solid var(--line);border-radius:18px;padding:10px 12px;background:#fff;transition:background .3s,border-color .3s;cursor:pointer}
+.stop.now{border-color:var(--accent);background:var(--soft)}
+.stop.done{opacity:.62}
+.stop .top{display:flex;gap:10px;align-items:baseline}
+.stop .t{font-weight:900;font-variant-numeric:tabular-nums;color:var(--accent);min-width:46px}
+.stop .n{font-weight:900;font-size:15.5px}
+.stop .go{margin:6px 0 0 56px;font-size:13px;background:var(--chip);border-radius:10px;padding:5px 9px}
+.stop .go b{color:var(--walked)}
+.stop .meta{margin:6px 0 0 56px;font-size:12.5px;color:var(--ink2)}
+.mlink{font-weight:700;color:var(--walked);text-decoration:none;border-bottom:1.5px dotted currentColor;white-space:nowrap}
+.note{font-size:12.5px;color:var(--ink2);margin:10px 4px 0}
+section.near{margin-top:16px}
+.near h2{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:900;margin:4px 4px 12px}
+.near h2 img{height:46px}
+.cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+@media (max-width:400px){.cats{grid-template-columns:1fr}}
+.cat h3{margin:0 0 8px;font-size:16px;font-weight:900}
+.cat ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.cat li{padding:8px 0;border-top:1.5px dashed var(--line)}
+.cat li:first-child{border-top:0}
+.cat .nm{font-weight:900;font-size:14.5px}
+.cat .hr{display:inline-block;font-size:11.5px;font-weight:700;background:var(--chip);color:var(--ink2);border-radius:999px;padding:0 8px;margin-left:6px;vertical-align:1px}
+.cat .hr.h24{background:var(--night);color:#fff}
+.cat .ds{font-size:12.5px;color:var(--ink2);margin-top:2px}
+.cat .nt{font-size:12.5px;color:var(--ink);margin-top:2px}
+.cat .jp{display:block;font-size:12px;font-weight:500;color:var(--ink2)}
+.cat .nm .hr{margin-left:0;margin-top:2px}
+.cat ul.fl{list-style:none;margin:6px 0 4px;padding:0;display:flex;flex-direction:column;gap:3px}
+.cat ul.fl li{border:0;padding:3px 9px;background:var(--chip);border-radius:8px;font-size:13px}
+.vck{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:700;color:var(--ink2);cursor:pointer;white-space:nowrap;margin-left:auto;padding:4px 0 4px 8px;min-height:32px}
+.vck input,.ck input{width:20px;height:20px;accent-color:var(--walked);margin:0;cursor:pointer}
+.stop .top{flex-wrap:nowrap}
+.stop.visited{border-color:#9ED9B4;background:#F3FBF6}
+.stop.visited .n::after{content:" ✓";color:#2E9A5A}
+.cat li.visited .nm{color:#2E9A5A}
+.cat .nmrow{display:flex;align-items:flex-start;gap:6px}
+.pin .vb{font-size:18px;font-weight:900;fill:#2E9A5A;stroke:#fff;stroke-width:4px;paint-order:stroke;display:none}
+.pin.visited .vb{display:inline}
+.pin.visited circle.dot{stroke:#2E9A5A}
+.checklist{margin-top:16px}
+.ckhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.ckhead h2{margin:0;font-size:20px;font-weight:900}
+.ckhead #ckCount{font-weight:900;color:var(--walked)}
+.ckhead .btn{margin-left:auto}
+.btn.sm{min-height:34px;padding:4px 12px;font-size:13px}
+.ckg h3{font-size:15px;margin:12px 0 6px}
+.ckg ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.ck{display:flex;align-items:center;gap:10px;border:2px solid var(--line);border-radius:14px;padding:10px 12px;cursor:pointer;font-weight:700;min-height:48px}
+.ck.on{background:#F3FBF6;border-color:#9ED9B4;color:#2E7A4C;text-decoration:line-through}
+.ckg .tip{font-size:12.5px;color:var(--ink2);margin:8px 2px 0}
+.ckg .shops{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px;margin-top:8px}
+.ckg .shop{background:var(--chip);border-radius:12px;padding:8px 10px;font-size:13px}
+.ckg .shop b{display:block}
+.esim{margin:4px 0 8px;padding:10px 14px}
+.esim summary{font-weight:900;cursor:pointer;min-height:32px;display:flex;align-items:center}
+.esim .hint{font-size:12.5px;color:var(--ink2);margin:8px 0}
+.ef{margin-top:8px}.ef label{display:block;font-size:13px;font-weight:700;margin-bottom:3px}
+.ef .row{display:flex;gap:8px}
+.ef input{flex:1;min-width:0;font:inherit;font-size:15px;border:2px solid var(--line);border-radius:12px;padding:8px 10px;background:#fff;color:var(--ink)}
+.offline{align-self:center;font-size:13px;font-weight:700;background:#5B4BC4;color:#fff;border-radius:999px;padding:4px 12px}
+.mapwrap{position:relative}
+.mebtn{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.92);box-shadow:0 2px 0 var(--line)}
+.mebtn[aria-pressed="false"]{background:rgba(255,255,255,.92);color:var(--ink);border-color:var(--line)}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;border-radius:14px;padding:10px 16px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:.3s;max-width:92vw;z-index:9}
+.toast.show{opacity:1;transform:translateX(-50%)}
+@media (prefers-reduced-motion:reduce){.pin.now .ring{animation:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero" role="img" aria-label="三麗鷗主題橫幅">
+    <div class="tag"><h1>大阪散步帖 ✿ 我的 6 天</h1><span class="sub">2026/10/29（四）– 11/03（二）・東横INN大阪なんば</span></div>
+  </header>
+
+  <div class="toolbar">
+    <button class="btn" id="themeBtn" type="button" aria-pressed="false">切換紫色格子版</button>
+    <button class="btn" id="liveBtn" type="button" aria-pressed="false">🕒 對照日本現在時間</button>
+    <span class="offline" id="offlineTag" hidden>📴 離線模式・顯示已存好的版本</span>
+  </div>
+
+  <details class="card esim" id="esim">
+    <summary>📶 我的 eSIM（只存在這支手機）</summary>
+    <p class="hint">在這支手機上貼上資料就會存起來，不會上傳、別人打開網址也看不到。安裝 eSIM 需要網路，建議在台灣先裝好，到日本只要開啟這條線路和「數據漫遊」。</p>
+    <div class="ef"><label for="esimAddr">SM-DP+ 位址</label><div class="row"><input id="esimAddr" autocomplete="off" spellcheck="false"><button class="btn sm" type="button" data-copy="esimAddr">複製</button></div></div>
+    <div class="ef"><label for="esimCode">啟用碼（Activation Code）</label><div class="row"><input id="esimCode" autocomplete="off" spellcheck="false"><button class="btn sm" type="button" data-copy="esimCode">複製</button></div></div>
+    <div class="ef"><label for="esimNote">備註（方案、客服、到期日）</label><div class="row"><input id="esimNote" autocomplete="off"><button class="btn sm" type="button" data-copy="esimNote">複製</button></div></div>
+  </details>
+
+  <nav class="days" id="days" role="tablist" aria-label="選擇日期"></nav>
+
+  <div id="dayView">
+    <div class="grid">
+      <section class="card" aria-labelledby="dayTitle">
+        <div class="daytitle"><h2 id="dayTitle"></h2><span id="dayArea"></span></div>
+        <div class="mapwrap">
+          <svg id="map" viewBox="0 0 1000 660" role="img" aria-label="當日路線示意圖"></svg>
+          <button class="btn sm mebtn" id="meBtn" type="button" aria-pressed="true">👧＋角色</button>
+        </div>
+        <div class="controls">
+          <button class="btn round" id="playBtn" type="button" aria-label="播放">▶</button>
+          <span class="clock" id="clock">--:--</span>
+          <input type="range" id="slider" min="0" max="1440" step="1" aria-label="時間軸">
+          <button class="btn" id="speedBtn" type="button" aria-label="播放速度">×1</button>
+        </div>
+        <div class="status" aria-live="polite"><img id="leaderImg" alt=""><span id="status"></span></div>
+        <p class="note">地圖是示意圖、不是實際比例（遠的路段有壓縮，旁邊標公里數）。實際位置請點每站的「地圖」。</p>
+      </section>
+      <section class="card" aria-label="當日行程">
+        <ol class="stops" id="stops"></ol>
+      </section>
+    </div>
+    <section class="card checklist" aria-labelledby="ckTitle">
+      <div class="ckhead"><h2 id="ckTitle">✅ 今天要帶・要做</h2><span id="ckCount"></span><button class="btn sm" id="ckReset" type="button">全部重設</button></div>
+      <div id="ckBody"></div>
+    </section>
+  </div>
+
+  <section class="near" id="near" aria-labelledby="nearTitle">
+    <h2 id="nearTitle"></h2>
+    <div class="cats" id="cats"></div>
+  </section>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* 每天的領隊角色（想換就改這裡）：img 資料夾裡的檔名 */
+const DAY_PALS=["kitty","cinnamoroll","kuromi","pompompurin","piano","pochacco"];
+const HOTEL_PAL="keroppi", NEAR_PAL="usahana";
+const HOTEL={name:"東横INN大阪なんば",ll:[34.6662,135.5009],addr:"大阪市中央区難波2-3-9",q:"東横INN大阪なんば"};
+const L={
+ kix:[34.4347,135.2440], ajinoya:[34.6681,135.5022], toki:[34.7025,135.4960], lucua:[34.7040,135.4963], lucua1100:[34.7037,135.4950],
+ shinsai:[34.6728,135.5015], kurumi:[34.6722,135.5019], mcoin:[34.6697,135.5014], yasaka:[34.6609,135.4956], umedaArr:[34.7031,135.4975],
+ ikizushi:[34.7022,135.5009], hep:[34.7039,135.5003], isaribi:[34.7058,135.4995], yodo:[34.7055,135.4963],
+ kuromon:[34.6655,135.5066], nishiya:[34.6724,135.5041], tamaseiya:[34.6664,135.5058], denden:[34.6590,135.5062], dpocket:[34.6622,135.5040], takashimaya:[34.6646,135.5013], shabucho:[34.6738,135.5046],
+ sannomiya:[34.6929,135.1955], ikuta:[34.6957,135.1919], ishida:[34.6937,135.1932], centergai:[34.6915,135.1925], daimaru:[34.6737,135.5010], sashisu:[34.6667,135.5047], otaroad:[34.6602,135.5050],
+ kiyomizu:[34.9949,135.7850], ninenzaka:[34.9980,135.7808], mikane:[35.0117,135.7564], nishiki:[35.0050,135.7650], tenmangu:[35.0052,135.7684], inari:[34.9671,135.7727], hatsuse:[34.6650,135.5030], dotonbori:[34.6687,135.5013]
+};
+const G=q=>"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q);
+const DAYS=[
+ {date:"2026-10-29",wd:"四",title:"抵達・梅田 Sanrio House・心齋橋",area:"關西機場 → 難波 → 梅田 → 心齋橋",stops:[
+  {t:"11:10",i:"✈️",n:"抵達關西機場 T1（JX820）",s:"KIX",ll:L.kix,note:"入境、領行李，12:30 跟大家會合"},
+  {t:"13:30",i:"🏨",n:"飯店寄放行李",s:"飯店",ll:HOTEL.ll,go:"預約接送專車，約 45–70 分",km:38,mode:"專車",tr:60,addr:HOTEL.addr,q:HOTEL.q},
+  {t:"14:00",i:"🥞",n:"午餐：味乃家 本店",s:"味乃家",ll:L.ajinoya,go:"步行約 3 分（往北經戎橋筋）",tr:5,addr:"大阪市中央区難波1-7-16 現代こいさんビル2F",q:"味乃家 本店 難波"},
+  {t:"15:25",i:"🎟️",n:"領 Sanrio House 整理券",s:"時空廣場",ll:L.toki,go:"<b>御堂筋線</b> なんば → 梅田（往千里中央）<b>4 站・約 9 分・¥240</b>，北改札上 5F 步行約 6 分",mode:"御堂筋線",tr:22,addr:"JR大阪駅 5F 時空の広場",q:"時空の広場 JR大阪駅",note:"整理券上會寫入場時段，等待時先逛 LUCUA"},
+  {t:"16:00",i:"🎀",n:"Sanrio House（LUCUA 6F）",s:"Sanrio House",ll:L.lucua,go:"時空の広場 → LUCUA 連通道，步行 2–3 分",tr:4,addr:"大阪市北区梅田3-1-3 LUCUA 6F",q:"sanrio house ルクア店"},
+  {t:"18:15",i:"🛍️",n:"心齋橋筋商店街跟大家會合",s:"心齋橋",ll:L.shinsai,go:"<b>御堂筋線</b> 梅田 → 心斎橋（往なんば）<b>3 站・約 7 分・¥240</b>",mode:"御堂筋線",tr:15,q:"心斎橋筋商店街"},
+  {t:"19:30",i:"🥩",n:"晚餐：胡桃燒肉 心齋橋本店（焼肉くるみ）",s:"胡桃燒肉",ll:L.kurumi,go:"商店街內步行約 3 分",tr:5,addr:"大阪市中央区心斎橋筋1-3-15 NSDビルB1F",q:"焼肉くるみ 心斎橋本店",note:"已訂位・隔壁 Sugi Drug 開到 24:00"},
+  {t:"21:00",i:"🧳",n:"買行李箱：M coin's 心斎橋本店",s:"M coin's",ll:L.mcoin,go:"沿心斎橋筋往南約 10 分",tr:10,map:"https://maps.app.goo.gl/pMw7cP6PcquQwEW4A",note:"關門的話改去道頓堀 Donki（24h）"},
+  {t:"21:45",i:"🏨",n:"回飯店",s:"飯店",ll:HOTEL.ll,go:"過戎橋 → 戎橋筋 → 飯店，步行約 6 分",tr:8,addr:HOTEL.addr,q:HOTEL.q}
+ ]},
+ {date:"2026-10-30",wd:"五",title:"難波八阪神社・梅田逛街",area:"難波 → 梅田（LUCUA／HEP FIVE）",stops:[
+  {t:"08:50",i:"🏨",n:"飯店出發",s:"飯店",ll:HOTEL.ll,addr:HOTEL.addr,q:HOTEL.q},
+  {t:"09:05",i:"🦁",n:"難波八阪神社（獅子殿）",s:"八阪神社",ll:L.yasaka,go:"步行約 15–18 分",tr:15,addr:"大阪市浪速区元町2-9-19",q:"難波八阪神社",note:"授与所 9:00 開・Kitty 御守改到 Day 5 錦天満宮買"},
+  {t:"09:45",i:"🚇",n:"抵達梅田",s:"梅田",ll:L.umedaArr,go:"步行 7 分到なんば站 → <b>御堂筋線</b> なんば → 梅田 <b>4 站・約 9 分・¥240</b>",mode:"御堂筋線",tr:25,note:"LUCUA 10:30 開門；LUCUA SOUTH 角色區 10:00 就開"},
+  {t:"10:30",i:"👜",n:"LUCUA 1100：6F → 3F → 2F → 1F → B1",s:"LUCUA 1100",ll:L.lucua1100,go:"北改札步行約 2 分",tr:4,addr:"大阪市北区梅田3-1-3",q:"LUCUA 1100",note:"mont-bell・Aesop・@cosme・SABON・diptyque・Sanrio・GU｜2F 星巴克可休息"},
+  {t:"12:00",i:"🍣",n:"午餐：大阪泉佐野港 活鮨",s:"活鮨",ll:L.ikizushi,go:"過御堂筋大十字路口往東，步行約 8 分",tr:8,addr:"大阪市北区小松原町2-4 富国生命ビルB2",q:"大阪泉佐野港 活鮨 梅田"},
+  {t:"13:15",i:"🎡",n:"HEP FIVE：B1 → 9F 往下逛",s:"HEP FIVE",ll:L.hep,go:"往北步行約 4 分",tr:5,addr:"大阪市北区角田町5-15",q:"HEP FIVE",note:"吉伊卡哇・蠟筆小新・PLAZA・3COINS｜7F 免費座位・B1 退稅"},
+  {t:"15:25",i:"🛍️",n:"LUCUA：9F → B1",s:"LUCUA",ll:L.lucua,go:"經阪急 BIG MAN 前過御堂筋，步行約 6 分",tr:7,addr:"大阪市北区梅田3-1-3",q:"LUCUA osaka",note:"LOFT・3COINS+plus・URBAN RESEARCH・DIESEL・MOUSSY"},
+  {t:"18:30",i:"🔥",n:"晚餐：力丸 爐端燒 漁火（炉ばた焼 漁火）",s:"漁火",ll:L.isaribi,go:"往北東步行約 5 分",tr:6,addr:"大阪市北区芝田1-5-12",q:"力丸 炉ばた焼 漁火"},
+  {t:"20:00",i:"📷",n:"友都八喜 梅田・LINKS（ヨドバシ梅田，到 21–22 點）",s:"友都八喜",ll:L.yodo,go:"步行約 3 分",tr:4,addr:"大阪市北区大深町1-1",q:"ヨドバシ梅田"},
+  {t:"21:00",i:"🏨",n:"回飯店",s:"飯店",ll:HOTEL.ll,go:"<b>御堂筋線</b> 梅田 → なんば <b>4 站・約 9 分・¥240</b>，24 號出口步行 2 分",mode:"御堂筋線",tr:20,addr:HOTEL.addr,q:HOTEL.q}
+ ]},
+ {date:"2026-10-31",wd:"六",title:"黑門市場・日本橋・東心齋橋",area:"日本橋 → 東心斎橋 → 難波",stops:[
+  {t:"09:50",i:"🏨",n:"飯店出發",s:"飯店",ll:HOTEL.ll,addr:HOTEL.addr,q:HOTEL.q},
+  {t:"10:00",i:"🐟",n:"黑門市場",s:"黑門市場",ll:L.kuromon,go:"往東走千日前通，步行約 7 分",tr:8,addr:"大阪市中央区日本橋2-4-1",q:"黒門市場",note:"黑銀鮪魚・丸善肉舖・大和果園｜別吃太飽"},
+  {t:"12:00",i:"🍜",n:"午餐：西家烏龍麵 本店（にし家）",s:"西家烏龍麵",ll:L.nishiya,go:"<b>堺筋線</b> 日本橋 → 長堀橋 <b>1 站・約 2 分・¥190</b>，步行約 7 分",mode:"堺筋線",tr:20,addr:"大阪市中央区東心斎橋1-18-18",q:"にし家 本店 東心斎橋"},
+  {t:"13:55",i:"🍡",n:"玉製家 紅豆麻糬（おはぎ，14:00 開）",s:"玉製家",ll:L.tamaseiya,go:"<b>堺筋線</b> 長堀橋 → 日本橋 <b>1 站・約 2 分・¥190</b>，B28 出口",mode:"堺筋線",tr:20,addr:"大阪市中央区千日前1-4-4",q:"玉製家 千日前",note:"賣完就關，早點排"},
+  {t:"14:20",i:"🎮",n:"日本橋電電城（でんでんタウン）",s:"電電城",ll:L.denden,go:"沿堺筋往南步行約 10 分",tr:10,q:"日本橋 でんでんタウン",note:"アニメイト・駿河屋・Joshin キッズランド・ボークス"},
+  {t:"15:00",i:"🧁",n:"Design Pocket 食物模型 DIY",s:"食物模型DIY",ll:L.dpocket,go:"往西到千日前道具屋筋，步行約 6 分",tr:6,addr:"大阪市中央区難波千日前10-11",q:"デザインポケット 難波千日前",note:"每整點一場、約 45 分"},
+  {t:"17:00",i:"🏬",n:"難波逛街：高島屋・Parks・Bic Camera",s:"高島屋",ll:L.takashimaya,go:"步行約 6 分",tr:6,addr:"大阪市中央区難波5-1-5",q:"高島屋 大阪店"},
+  {t:"19:30",i:"🍲",n:"晚餐：涮長壽喜燒（しゃぶ長）",s:"涮長壽喜燒",ll:L.shabucho,go:"<b>御堂筋線</b> なんば → 心斎橋 <b>1 站・約 2 分・¥190</b>，步行約 4 分",mode:"御堂筋線",tr:20,addr:"大阪市中央区東心斎橋1-15-25",q:"しゃぶ長 東心斎橋",note:"週六 17:30–22:00"},
+  {t:"21:30",i:"🏨",n:"回飯店",s:"飯店",ll:HOTEL.ll,go:"經宗右衛門町 → 戎橋 → 戎橋筋，步行約 15 分",tr:15,addr:HOTEL.addr,q:HOTEL.q}
+ ]},
+ {date:"2026-11-01",wd:"日",title:"神戶半日・心齋橋・日本橋",area:"三宮 → 心斎橋 → 日本橋",stops:[
+  {t:"07:50",i:"🏨",n:"飯店出發",s:"飯店",ll:HOTEL.ll,addr:HOTEL.addr,q:HOTEL.q},
+  {t:"08:45",i:"🚃",n:"抵達神戸三宮（阪神）",s:"神戸三宮",ll:L.sannomiya,go:"<b>阪神なんば線 快速急行</b> 大阪難波 → 神戸三宮 <b>第 11 站・約 42 分・約 ¥410</b>",mode:"阪神 快速急行",km:31,tr:50},
+  {t:"09:00",i:"⛩️",n:"生田神社",s:"生田神社",ll:L.ikuta,go:"西口往北過 JR 高架，步行約 8 分",tr:10,addr:"神戸市中央区下山手通1-2-1",q:"生田神社",note:"縁結び守・水みくじ"},
+  {t:"10:00",i:"🛍️",n:"三宮中央商店街・三宮地下街（センター街・さんちか）",s:"中央商店街",ll:L.centergai,go:"往南步行約 5 分",tr:6,q:"三宮センター街"},
+  {t:"11:30",i:"🥩",n:"午餐：神戸牛 Ishida. 本店",s:"Ishida",ll:L.ishida,go:"往北過 JR 高架，步行約 5 分",tr:6,addr:"神戸市中央区北長狭通1-21-2 TAKAIビル3F",q:"神戸牛ステーキ Ishida 本店"},
+  {t:"13:00",i:"🛍️",n:"中央商店街逛 1 小時（センター街）",s:"中央商店街",ll:L.centergai,go:"往南步行約 5 分",tr:6,q:"三宮センター街"},
+  {t:"14:10",i:"🚃",n:"阪神神戸三宮 搭車回大阪",s:"神戸三宮",ll:L.sannomiya,go:"經さんちか地下街，步行約 4 分",tr:6},
+  {t:"15:10",i:"🏬",n:"大丸百貨 心齋橋店・PARCO",s:"大丸心齋橋",ll:L.daimaru,go:"<b>阪神 快速急行</b> → 大阪難波 <b>約 42 分</b>，轉 <b>御堂筋線</b> → 心斎橋 <b>1 站</b>",mode:"阪神＋御堂筋線",km:31,tr:55,addr:"大阪市中央区心斎橋筋1-7-1",q:"大丸心斎橋店",note:"9F 寶可夢中心・1F 化妝品香水・旁邊 Sanrio 心斎橋店"},
+  {t:"17:00",i:"🍣",n:"晚餐：壽司酒場 SASHISU 難波Walk店（すし酒場 さしす）",s:"壽司酒場",ll:L.sashisu,go:"沿心斎橋筋往南 → なんばウォーク往東，步行約 18 分",tr:20,addr:"大阪市中央区千日前1丁目 なんばウォーク3番街南通り",q:"すし酒場 さしす なんばウォーク店"},
+  {t:"18:30",i:"🎮",n:"日本橋御宅街・駿河屋（オタロード）",s:"御宅街",ll:L.otaroad,go:"往南步行約 8 分",tr:8,q:"オタロード 日本橋",note:"動漫店多 20:00 關、駿河屋 21:00"},
+  {t:"20:30",i:"🏨",n:"回飯店",s:"飯店",ll:HOTEL.ll,go:"走なんばウォーク地下街，24 號出口上來約 10 分",tr:10,addr:HOTEL.addr,q:HOTEL.q}
+ ]},
+ {date:"2026-11-02",wd:"一",title:"京都包車",area:"清水寺 → 錦市場 → 伏見稻荷 → 難波",stops:[
+  {t:"09:00",i:"🏨",n:"飯店出發（包車）",s:"飯店",ll:HOTEL.ll,addr:HOTEL.addr,q:HOTEL.q},
+  {t:"10:00",i:"🏯",n:"清水寺",s:"清水寺",ll:L.kiyomizu,go:"包車約 60–75 分，清水坂観光駐車場下車",mode:"包車",km:52,tr:60,addr:"京都市東山区清水1-294",q:"清水寺"},
+  {t:"11:00",i:"🍵",n:"三年坂・二年坂",s:"二年坂",ll:L.ninenzaka,go:"往下步行約 10 分",tr:10,q:"二年坂 京都",note:"七味家・Malebranche 茶之菓・八橋"},
+  {t:"12:00",i:"💰",n:"御金神社（福財布）",s:"御金神社",ll:L.mikane,go:"包車約 25 分，西洞院通臨停",mode:"包車",tr:25,addr:"京都市中京区西洞院通御池上る押西洞院町614",q:"御金神社"},
+  {t:"13:00",i:"🍢",n:"錦市場 邊走邊吃（在店門口吃完）",s:"錦市場",ll:L.nishiki,go:"包車約 10 分，西口下車",mode:"包車",tr:10,q:"錦市場",note:"三木雞卵玉子燒・豆乳甜甜圈・章魚蛋・史努比茶屋"},
+  {t:"14:15",i:"🎀",n:"錦天満宮：Hello Kitty 御守 ¥800",s:"錦天満宮",ll:L.tenmangu,go:"錦市場東端出口，步行 3 分",tr:5,addr:"京都市中京区新京極通四条上る中之町537",q:"錦天満宮"},
+  {t:"15:00",i:"⛩️",n:"伏見稲荷大社 千本鳥居",s:"伏見稲荷",ll:L.inari,go:"包車約 25 分",mode:"包車",tr:25,addr:"京都市伏見区深草薮之内町68",q:"伏見稲荷大社",note:"狐狸仙貝・稻荷壽司"},
+  {t:"18:30",i:"🥞",n:"晚餐：千日前 初瀨大阪燒（はつせ）",s:"初瀨大阪燒",ll:L.hatsuse,go:"17:00 出發，包車約 75 分",mode:"包車",km:45,tr:80,addr:"大阪市中央区難波千日前11-25",q:"千日前 はつせ",note:"可訂位・全包廂"},
+  {t:"20:00",i:"🛍️",n:"道頓堀最後採買",s:"道頓堀",ll:L.dotonbori,go:"步行約 5 分",tr:6,q:"道頓堀"},
+  {t:"21:00",i:"🏨",n:"回飯店整理行李",s:"飯店",ll:HOTEL.ll,go:"步行約 6 分",tr:8,addr:HOTEL.addr,q:HOTEL.q}
+ ]},
+ {date:"2026-11-03",wd:"二",title:"回台灣",area:"難波 → 關西機場 T1",stops:[
+  {t:"10:00",i:"🏨",n:"Check-out・包車去機場",s:"飯店",ll:HOTEL.ll,addr:HOTEL.addr,q:HOTEL.q,note:"11/1 後買的退稅品放隨身"},
+  {t:"11:00",i:"🧳",n:"KIX T1 4F 星宇 JX823 報到",s:"KIX T1",ll:L.kix,go:"包車約 45–60 分",mode:"包車",km:38,tr:55,q:"関西国際空港 第1ターミナル"},
+  {t:"11:30",i:"🍱",n:"安檢前午餐（2F 551蓬莱・3F Botejyu 大阪燒）",s:"KIX T1",ll:L.kix},
+  {t:"12:30",i:"🛂",n:"安檢・出境・KIX DUTY FREE",s:"KIX T1",ll:L.kix,note:"13:30 前到登機門"},
+  {t:"14:00",i:"✈️",n:"JX823 起飛（16:20 抵達桃園）",s:"KIX T1",ll:L.kix}
+ ]}
+];
+
+/* 附近可以去的地方：[名稱, 地址, 營業時間, 備註] */
+const HOTEL_NEAR=[
+ {cat:"🏪 便利商店",items:[
+  ["ローソン 難波二丁目店","大阪市中央区難波2-2-3","24h","步行 1 分・同一排"],
+  ["ファミリーマート なんばウォーク店","大阪市中央区千日前1丁目 虹のまち5-9（地下街）","依地下街","步行 2–3 分"],
+  ["ファミリーマート 難波一丁目店","大阪市中央区難波1-7-10","未確認","步行 3 分"],
+  ["ローソン 千日前一丁目店","大阪市中央区千日前1-6-2","24h","步行 4 分"],
+  ["ファミリーマート 千日前一丁目店","大阪市中央区千日前1-9-7","未確認","步行 4 分"],
+  ["ファミリーマート 難波千日前通店","大阪市中央区難波3-5-17 北極星ビル","未確認","步行 4 分"],
+  ["ファミリーマート 難波三丁目店","大阪市中央区難波3-6-7","未確認","步行 5 分"],
+  ["セブンイレブン 難波千日前店","大阪市中央区難波千日前7-19","24h","步行 6 分"],
+  ["セブンイレブン 大阪道頓堀2丁目店","大阪市中央区道頓堀2-2-9","24h","步行 6 分"],
+  ["ローソン 道頓堀店","大阪市中央区道頓堀2-3-29","24h","步行 7 分"],
+  ["セブンイレブン なんばスカイオ店","大阪市中央区難波5-1-60","未確認","步行 7 分"],
+  ["ローソン 千日前二丁目店","大阪市中央区千日前2-8-17","24h","步行 7 分"],
+  ["ローソン 日本橋一丁目店","大阪市中央区日本橋1-20-5","24h","步行 7–8 分"]]},
+ {cat:"💊 藥妝店",items:[
+  ["スギドラッグ なんば御堂筋店","大阪市中央区難波2-1-2 太陽生命難波ビル1F","未確認","步行 1–2 分"],
+  ["マツモトキヨシ 道頓堀一丁目店","大阪市中央区道頓堀1-4-27","10:00–23:00","步行 3–4 分"],
+  ["スギドラッグ 道頓堀東店","大阪市中央区道頓堀1-2-1 DO BOX103","未確認","步行 4–5 分"],
+  ["ココカラファイン なんば店","大阪市中央区難波3-7-4 和讃ビル1F","10:00–23:00","步行 5 分"],
+  ["KoKuMiN NAMBAなんなん店","大阪市中央区難波5丁目 なんなんタウン（地下街）","8:00–22:00","步行 6 分"],
+  ["コクミンドラッグ 日本橋店","大阪市中央区日本橋1-18-1 日本一会館1F","8:00–22:00","步行 6–7 分"],
+  ["マツモトキヨシ 黒門市場店","大阪市中央区日本橋1-16-13","9:00–20:00","步行 7 分"],
+  ["サンドラッグ 道頓堀店","大阪市中央区宗右衛門町7-2","10:00–23:00（未確認）","步行 7 分"]]},
+ {cat:"🛒 超市",items:[
+  ["ライフ ビオラル なんばマルイ店","大阪市中央区難波3-8-9 なんばマルイB1","11:00–20:00","步行 5 分"],
+  ["A-プライス 難波千日前店","大阪市中央区難波千日前9-11","10:00–19:30","步行 5 分・業務用食材"],
+  ["成城石井 なんばCITY店","大阪市中央区難波5-1-60 なんばCITY本館B2","10:00–22:00","步行 7 分"],
+  ["業務スーパー 高津店","大阪市中央区日本橋2-1-9","9:00–21:00","步行 8 分"]]},
+ {cat:"🌙 24 小時・連鎖店",items:[
+  ["ドン・キホーテ 道頓堀御堂筋店","大阪市中央区西心斎橋2-5-9","24h","步行 6–7 分"],
+  ["ドン・キホーテ 道頓堀店","大阪市中央区宗右衛門町7-13","24h","步行 7–8 分・有賣行李箱"],
+  ["3COINS なんばCITY店","大阪市中央区難波5-1-60 なんばCITY","11:00–21:00","步行 7 分"],
+  ["Sanrio Gift Gate なんば戎橋店","大阪市中央区難波1-8-3（戎橋筋商店街）","11:30–20:00","步行 3–4 分"]]}
+];
+
+const DAY_NEAR=[
+ /* Day 1 */[
+  {cat:"🌙 心齋橋 21:00 後還開的店",items:[
+   ["スギドラッグ 心斎橋店","大阪市中央区心斎橋筋1-3-22","9:00–24:00","燒肉くるみ幾乎隔壁・可免稅"],
+   ["ドン・キホーテ 道頓堀店","大阪市中央区宗右衛門町7-13","24h","有賣行李箱"],
+   ["ドン・キホーテ 道頓堀御堂筋店","大阪市中央区西心斎橋2-5-9","24h",""],
+   ["心斎橋PARCO B2 ネオン食堂街","大阪市中央区心斎橋筋1-8-3","到 23:00","賣場 20:00 關"]]},
+  {cat:"🎀 晚餐前順路",items:[
+   ["サンリオ 心斎橋店","大阪市中央区心斎橋筋1-5-21","11:00–20:30",""],
+   ["Sanrio Gift Gate なんば戎橋店","大阪市中央区難波1-8-3","11:30–20:00",""],
+   ["m coin's osaka（南船場）","大阪市中央区南船場3-7-20","11:00–19:00","另一間行李箱店"]]}
+ ],
+ /* Day 2 */[
+  {cat:"🏬 樓層重點",items:[
+   ["LUCUA 1100","大阪市北区梅田3-1-3","10:30–20:30","6F mont-bell｜3F Aesop・A.P.C.・@cosme OSAKA｜2F AUX PARADIS・Her lip to BEAUTY・ReFa・SABON・diptyque｜1F Sanrio｜B1 GU"],
+   ["HEP FIVE","大阪市北区角田町5-15","11:00–21:00","8–9F 萬代南夢宮｜6F 3COINS｜5F adidas・HARE・WEGO・RAGEBLUE｜4F 蠟筆小新・PLAZA・Sanrio vivitix｜3F RAYCASSIN・JEANASIS・MARY QUANT・SMELLY｜2F ALAND・Heather・LOWRYS FARM｜1F EMODA・niko and...・AZUL・BEAMS STREET｜B1 吉伊卡哇・archives・RETRO GIRL・退稅"],
+   ["LUCUA","大阪市北区梅田3-1-3","10:30–20:30","9F LOFT｜8F MARY QUANT・3COINS+plus・JILL STUART 香氛｜7F URBAN RESEARCH・Salomon｜6F LOWRYS FARM・襪子屋・archives・SLY・Sanrio House｜5F DIESEL・MOUSSY｜3F FREAK'S STORE・BEAMS・PAUL & JOE BEAUTE｜B1 3COINS oops"]]},
+  {cat:"☕ 可以坐下休息",items:[
+   ["時空の広場（免費長椅）","JR大阪駅 5F","8:00–23:30",""],
+   ["HEP FIVE 7F 公共座位","大阪市北区角田町5-15","11:00–21:00","旁邊有 Starbucks・CHUMI"],
+   ["天空の農園","大阪ステーションシティ ノースゲートビル14F","未確認","搭到 11F 再走樓梯・沒有廁所"],
+   ["LUCUA 1100 2F Starbucks・伊右衛門カフェ","大阪市北区梅田3-1-3","",""],
+   ["梅田 蔦屋書店（LUCUA 1100 9F）","大阪市北区梅田3-1-3","","書店咖啡"],
+   ["LUCUA 9F Starbucks","大阪市北区梅田3-1-3","",""]]},
+  {cat:"🌙 晚餐後還開的店",items:[
+   ["ドン・キホーテ 梅田本店","大阪市北区小松原町4-16","24h",""],
+   ["ヨドバシ梅田","大阪市北区大深町1-1","9:30–22:00",""],
+   ["LINKS UMEDA","大阪市北区大深町1-1","到 21:00","UNIQLO・GU・3COINS・AINZ & TULPE"],
+   ["阪急三番街","大阪市北区芝田1-1-3","到 21:00","離漁火最近"],
+   ["グランフロント大阪","大阪市北区大深町4-20","到 21:00","南館 3F 退稅"],
+   ["NU茶屋町","大阪市北区茶屋町10-12","到 21:00",""],
+   ["EST","大阪市北区角田町3-25","到 21:00",""],
+   ["ホワイティうめだ","大阪市北区小松原町（地下街）","到 21:00",""]]}
+ ],
+ /* Day 3 */[
+  {cat:"🐟 黑門市場吃什麼",items:[
+   ["まぐろや黒銀","大阪市中央区日本橋2-11-1 黒門ビル","8:00–17:00","本鮪三色丼"],
+   ["丸善食肉店","大阪市中央区日本橋2-11-2","7:30–19:00","牛排・神戶牛串，可免費代烤"],
+   ["ダイワ果園 黒門本店","大阪市中央区日本橋1-22-20","9:00–17:00","水果捲・現打果汁"],
+   ["串誠 KUSHISEI","大阪市中央区日本橋2-2-17","9:00–18:00","烤海鮮串"]]},
+  {cat:"🎮 動漫・模型",items:[
+   ["アニメイト大阪日本橋","大阪市浪速区日本橋西1-1-3","10:00–20:00",""],
+   ["駿河屋 大阪日本橋本店","大阪市浪速区日本橋4-11-3","10:00–21:00",""],
+   ["駿河屋 オタロード アニメ・ホビー館","大阪市浪速区日本橋3-8-18","10:00–21:00",""],
+   ["Joshin スーパーキッズランド本店","大阪市浪速区日本橋4-12-4","10:00–20:00",""],
+   ["スーパーキッズランド キャラクター館","大阪市浪速区日本橋4-10-1","10:00–20:00","鋼彈・模型"],
+   ["ボークス 大阪ショールーム","大阪市浪速区日本橋4-9-18","11:00–20:00",""],
+   ["ジャングル 大阪日本橋本店","大阪市浪速区日本橋3-4-16","11:00–20:00","特攝・超合金"],
+   ["コトブキヤなんば","大阪市中央区難波千日前7-10 COCONAMBA 1F","11:00–20:00",""]]},
+  {cat:"📷 電器",items:[
+   ["Joshin 日本橋店","大阪市浪速区日本橋5-9-5","10:00–20:00",""],
+   ["ソフマップ なんば店","大阪市浪速区日本橋3-6-18","11:00–20:00",""],
+   ["e☆イヤホン 日本橋本店","大阪市浪速区日本橋5-9-19","11:00–20:00",""],
+   ["ビックカメラ なんば店","大阪市中央区千日前2-10-1","10:00–22:00",""]]},
+  {cat:"🏬 百貨・商場（服飾、包鞋、美妝、香水）",items:[
+   ["大阪高島屋","大阪市中央区難波5-1-5","10:00–20:00","1F 國際化妝品・香水"],
+   ["なんばパークス","大阪市浪速区難波中2-10-70","11:00–21:00","T-terrace 1F DAISO・Standard Products"],
+   ["なんばマルイ","大阪市中央区難波3-8-9","11:00–20:00","女裝・鞋包"],
+   ["なんばスカイオ","大阪市中央区難波5-1-60","11:00–21:00","5F 無印良品"],
+   ["なんばCITY","大阪市中央区難波5-1-60","約 11:00–21:00","3COINS・服飾・鞋店"],
+   ["大丸心斎橋店","大阪市中央区心斎橋筋1-7-1","10:00–20:00","1F 化妝品・9F 寶可夢中心"],
+   ["心斎橋PARCO","大阪市中央区心斎橋筋1-8-3","10:00–20:00",""]]},
+  {cat:"🚇 從日本橋去其他商圈",items:[
+   ["心齋橋（大丸・PARCO・心齋橋筋）","大阪市中央区心斎橋筋1丁目","","約 1.5km｜走路約 20 分｜或 堺筋線 恵美須町 → 長堀橋 2 站・約 4 分・¥190，再走 5 分，合計約 15 分"],
+   ["梅田百貨（阪急・LUCUA・HEP FIVE）","大阪市北区梅田","","約 5.5km｜走到なんば站約 10 分 → 御堂筋線 なんば → 梅田 4 站・約 9 分・¥240，合計約 25–30 分｜計程車約 15–20 分、約 ¥2,000"]]},
+  {cat:"🌙 晚餐後還開的店（涮長附近）",items:[
+   ["ドン・キホーテ 道頓堀店","大阪市中央区宗右衛門町7-13","24h","步行約 5 分"],
+   ["スギドラッグ 心斎橋店","大阪市中央区心斎橋筋1-3-22","到 24:00",""],
+   ["ビックカメラ なんば店","大阪市中央区千日前2-10-1","到 22:00",""],
+   ["心斎橋PARCO B2 ネオン食堂街","大阪市中央区心斎橋筋1-8-3","到 23:00",""]]}
+ ],
+ /* Day 4 */[
+  {cat:"⛩️ 生田神社必買",items:[
+   ["縁結び守","神戸市中央区下山手通1-2-1","授与所 9:00–17:00","¥1,000"],
+   ["たまき（手環御守）","生田神社","","¥1,000・紅藍兩色"],
+   ["八重の糸・桜恋守","生田神社","","各 ¥1,000"],
+   ["縁結び 水みくじ","生田神社","","¥300・放進池水浮出籤文"]]},
+  {cat:"🛍️ 三宮・センター街",items:[
+   ["さんちか（地下街）","神戸市中央区三宮町1-10-1","10:00–20:00","神戶甜點伴手禮"],
+   ["神戸阪急（新館 神戸ロフト）","神戸市中央区小野柄通8-1-8","10:00–20:00","B1 洋菓子"],
+   ["大丸神戸店","神戸市中央区明石町40","10:00–20:00","化妝品・香水・精品"],
+   ["三宮オーパ（B1 ドンキ）","神戸市中央区三宮町1-5-26","10:00–21:00",""],
+   ["神戸マルイ","神戸市中央区三宮町1-7-2","10:30–20:00",""],
+   ["ユニクロ 神戸三宮店","神戸市中央区三宮町1-7-5","未確認","兵庫縣最大"],
+   ["DAISO 三宮センター街店","神戸市中央区三宮町2-10-7 6F","10:00–20:00",""],
+   ["ハンズ 三宮店","神戸市中央区下山手通2-10-1","10:00–20:30",""],
+   ["アニメイト三宮","三宮センタープラザ 3F","10:00–20:00",""]]},
+  {cat:"🏬 下午心齋橋",items:[
+   ["大丸心斎橋店 本館","大阪市中央区心斎橋筋1-7-1","10:00–20:00","1F 化妝品香水・9F ポケモンセンター"],
+   ["心斎橋PARCO","大阪市中央区心斎橋筋1-8-3","10:00–20:00",""],
+   ["サンリオ 心斎橋店","大阪市中央区心斎橋筋1-5-21","11:00–20:30",""],
+   ["心斎橋筋商店街","大阪市中央区心斎橋筋","多數 11:00–21:00","藥妝・服飾・鞋店"]]},
+  {cat:"🌙 晚餐後日本橋・難波",items:[
+   ["なんばウォーク（地下街）","大阪市中央区千日前1丁目","約到 21:00","就在さしす旁"],
+   ["駿河屋 大阪日本橋本店","大阪市浪速区日本橋4-11-3","到 21:00",""],
+   ["アニメイト大阪日本橋","大阪市浪速区日本橋西1-1-3","到 20:00","先逛"],
+   ["ビックカメラ なんば店","大阪市中央区千日前2-10-1","到 22:00",""],
+   ["なんばパークス","大阪市浪速区難波中2-10-70","到 21:00",""],
+   ["コクミンドラッグ 日本橋店","大阪市中央区日本橋1-18-1","到 22:00",""],
+   ["ドン・キホーテ 道頓堀店","大阪市中央区宗右衛門町7-13","24h",""]]}
+ ],
+ /* Day 5 */[
+  {cat:"💰 御金神社授與品",items:[
+   ["金色福財布","京都市中京区西洞院通御池上る押西洞院町614","授與所 10:00–16:00","¥1,000・常賣完"],
+   ["金運大金守り・宝づくし守り","御金神社","","各 ¥800"],
+   ["御金みくじ・銀杏繪馬","御金神社","","¥300・¥500"]]},
+  {cat:"🍢 錦市場吃什麼（11/2 週一：鱧秀休）",items:[
+   ["三木鶏卵","京都市中京区錦小路通富小路西入ル東魚屋町182","9:00–17:00","高湯玉子燒"],
+   ["田中鶏卵","京都市中京区東魚屋町185","9:00–18:00","京だし巻"],
+   ["こんなもんじゃ","京都市中京区中魚屋町494","10:00–18:00","豆乳甜甜圈"],
+   ["鮮魚木村","京都市中京区中魚屋町486","約 9:00–17:30","鮭魚・鮪魚串"],
+   ["錦 魚力","京都市中京区東魚屋町176-1","10:00–18:00","鱧魚天婦羅"],
+   ["鳥清","京都市中京区東魚屋町186","8:00–17:00","雞叉燒棒"],
+   ["カリカリ博士","京都市中京区東魚屋町185-6","10:00–19:00","章魚燒"],
+   ["櫂 KAI","京都市中京区鍛冶屋町216","8:30–18:00","たこたまご"],
+   ["錦一葉","京都市中京区鍛治屋町210","10:00–18:00","鯛魚燒"],
+   ["花よりキヨエ","京都市中京区船屋町399","10:00–18:00","湯葉奶油可樂餅"],
+   ["SNOOPY茶屋 京都・錦店","京都市中京区中魚屋町480","10:00–18:00",""],
+   ["にしきギョーザ","京都市中京区中魚屋町498-1","10:00–18:00","煎餃"],
+   ["元蔵","京都市中京区東魚屋町167","11:00–22:00","湯葉烏龍麵（坐著吃）"],
+   ["打田漬物 錦小路店","京都市中京区錦小路通柳馬場西入ル","9:30–18:00","伴手禮・可試吃"]]},
+  {cat:"🍵 清水寺・二年坂・三年坂",items:[
+   ["七味家本舗","京都市東山区清水2-221","9:00–18:00","七味粉"],
+   ["マールブランシュ 清水坂店","京都市東山区清水2-256","10:00–17:00","茶の菓"],
+   ["元祖八ッ橋 西尾","京都市東山区清水2-232","8:00–18:00","生八橋"],
+   ["おちゃのこさいさい 産寧坂本店","京都市東山区清水3-316-4","9:00–18:00","舞妓辣油"],
+   ["京都蒟蒻しゃぼん 清水本店","京都市東山区清水3-340-3","10:00–18:00",""],
+   ["港屋","京都市東山区桝屋町349-25","10:00–18:00","黒玉（限量）"],
+   ["Starbucks 京都二寧坂ヤサカ茶屋店","京都市東山区桝屋町349","8:00–20:00","可坐下休息"],
+   ["%ARABICA 京都東山","京都市東山区星野町87-5","9:00–18:00",""]]},
+  {cat:"🦊 伏見稲荷",items:[
+   ["祢ざめ家","京都市伏見区深草稲荷御前町82-1","10:00–16:00","稻荷壽司"],
+   ["総本家 宝玉堂","京都市伏見区深草一ノ坪町27","7:30–18:00","狐狸仙貝"],
+   ["寺子屋本舗 伏見店","京都市伏見区深草稲荷御前町65","9:30–17:30","濕仙貝"],
+   ["京豆庵 伏見稲荷店","京都市伏見区深草一ノ坪町16-20","9:00–18:00","豆腐霜淇淋"],
+   ["稲荷茶寮","京都市伏見区深草薮之内町68","10:30–16:30","抹茶聖代"]]},
+  {cat:"🥞 晚餐備案（難波）",items:[
+   ["千日前 はつせ","大阪市中央区難波千日前11-25","11:30–24:00","可訂位・全包廂"],
+   ["千房 千日前本店","大阪市中央区難波千日前11-27","約 11:00–23:00",""],
+   ["串かつだるま 道頓堀店","大阪市中央区道頓堀1-6-8","11:00–22:30",""]]}
+ ],
+ /* Day 6 */[
+  {cat:"🍱 KIX T1 安檢前餐廳",items:[
+   ["551蓬莱・関空食堂・すし処 ほんまもん・たこ昌・龍旗信","関西国際空港 第1ターミナル 2F","多為 7:00–22:00",""],
+   ["ぼてぢゅう（大阪燒）","関西国際空港 第1ターミナル 3F","",""],
+   ["Starbucks ノースゲート店","関西国際空港 第1ターミナル 4F","",""]]},
+  {cat:"✈️ 出境後",items:[
+   ["KIX DUTY FREE（中央穿越式主店）","関西国際空港 第1ターミナル 出境後 2F","6:00–26:00","化妝品香水 80+ 品牌・酒・點心"],
+   ["Wall Side 精品","出境後","","LOEWE・Gentle Monster・Tiffany・DIOR・LV…"],
+   ["Magnet","出境後","","UNIQLO・Fresh・関西旅日記"],
+   ["Fun（北側）","出境後","","Universal Studios Store・Kawaii Buzz・Anime Hunt"],
+   ["Peaceful（南側）","出境後","","マツモトキヨシ・ココカラファイン・福寿園"],
+   ["出境後餐廳","出境後","約 6:30–翌0:55","築地孫右衛門・MENSHO・Washoku 美食街・Tully's"]]}
+ ]
+];
+
+/* 日文店名 → 中文名稱（顯示在日文前面） */
+const ZH={
+"ローソン 難波二丁目店":"Lawson 難波二丁目店","ファミリーマート なんばウォーク店":"全家 難波Walk地下街店","ファミリーマート 難波一丁目店":"全家 難波一丁目店",
+"ローソン 千日前一丁目店":"Lawson 千日前一丁目店","ファミリーマート 千日前一丁目店":"全家 千日前一丁目店","ファミリーマート 難波千日前通店":"全家 難波千日前通店",
+"ファミリーマート 難波三丁目店":"全家 難波三丁目店","セブンイレブン 難波千日前店":"7-11 難波千日前店","セブンイレブン 大阪道頓堀2丁目店":"7-11 道頓堀2丁目店",
+"ローソン 道頓堀店":"Lawson 道頓堀店","セブンイレブン なんばスカイオ店":"7-11 難波Skyo店","ローソン 千日前二丁目店":"Lawson 千日前二丁目店","ローソン 日本橋一丁目店":"Lawson 日本橋一丁目店",
+"スギドラッグ なんば御堂筋店":"杉藥局 難波御堂筋店","マツモトキヨシ 道頓堀一丁目店":"松本清 道頓堀一丁目店","スギドラッグ 道頓堀東店":"杉藥局 道頓堀東店",
+"ココカラファイン なんば店":"Cocokara Fine 藥妝 難波店","KoKuMiN NAMBAなんなん店":"國民藥妝 難波地下街店","コクミンドラッグ 日本橋店":"國民藥妝 日本橋店",
+"マツモトキヨシ 黒門市場店":"松本清 黑門市場店","サンドラッグ 道頓堀店":"Sun Drug 藥妝 道頓堀店",
+"ライフ ビオラル なんばマルイ店":"LIFE BIO-RAL 有機超市（難波丸井 B1）","A-プライス 難波千日前店":"A-Price 業務食材超市","成城石井 なんばCITY店":"成城石井 高級超市（難波CITY）","業務スーパー 高津店":"業務超市 高津店",
+"ドン・キホーテ 道頓堀御堂筋店":"唐吉訶德 道頓堀御堂筋店","ドン・キホーテ 道頓堀店":"唐吉訶德 道頓堀店（摩天輪那間）","3COINS なんばCITY店":"3COINS 難波CITY店","Sanrio Gift Gate なんば戎橋店":"三麗鷗禮品店 難波戎橋店",
+"スギドラッグ 心斎橋店":"杉藥局 心齋橋店","心斎橋PARCO B2 ネオン食堂街":"心齋橋PARCO B2 霓虹美食街","サンリオ 心斎橋店":"三麗鷗 心齋橋店","m coin's osaka（南船場）":"M coin's 南船場店",
+"時空の広場（免費長椅）":"時空廣場（免費長椅）","天空の農園":"天空農園（屋頂花園）","LUCUA 1100 2F Starbucks・伊右衛門カフェ":"LUCUA 1100 2F 星巴克・伊右衛門咖啡","梅田 蔦屋書店（LUCUA 1100 9F）":"梅田 蔦屋書店（LUCUA 1100 9F）","LUCUA 9F Starbucks":"LUCUA 9F 星巴克",
+"ドン・キホーテ 梅田本店":"唐吉訶德 梅田本店","ヨドバシ梅田":"友都八喜 梅田（Yodobashi 電器）","LINKS UMEDA":"LINKS UMEDA 商場","阪急三番街":"阪急三番街 地下商店街","グランフロント大阪":"Grand Front 大阪","NU茶屋町":"NU 茶屋町 商場","EST":"EST 商場","ホワイティうめだ":"Whity 梅田地下街",
+"まぐろや黒銀":"黑銀 鮪魚丼","丸善食肉店":"丸善肉舖（神戶牛串）","ダイワ果園 黒門本店":"大和果園 水果店","串誠 KUSHISEI":"串誠 烤海鮮串",
+"アニメイト大阪日本橋":"Animate 動漫專賣 日本橋店","駿河屋 大阪日本橋本店":"駿河屋 二手動漫 日本橋本店","駿河屋 オタロード アニメ・ホビー館":"駿河屋 御宅街 動漫模型館",
+"Joshin スーパーキッズランド本店":"上新電機 Super Kids Land 本店（模型玩具）","スーパーキッズランド キャラクター館":"Super Kids Land 角色館","ボークス 大阪ショールーム":"VOLKS 娃娃・模型展示館",
+"ジャングル 大阪日本橋本店":"Jungle 特攝玩具 本店","コトブキヤなんば":"壽屋 Kotobukiya 難波店","Joshin 日本橋店":"上新電機 日本橋店","ソフマップ なんば店":"Sofmap 電器 難波店",
+"e☆イヤホン 日本橋本店":"e☆耳機專賣 日本橋本店","ビックカメラ なんば店":"Bic Camera 難波店","大阪高島屋":"高島屋百貨 大阪店","なんばパークス":"Namba Parks 難波公園商場",
+"なんばマルイ":"難波丸井百貨","なんばスカイオ":"難波 Skyo 商場","なんばCITY":"難波 CITY 商場","大丸心斎橋店":"大丸百貨 心齋橋店","心斎橋PARCO":"心齋橋 PARCO",
+"縁結び守":"結緣御守","たまき（手環御守）":"Tamaki 手環御守","八重の糸・桜恋守":"八重之糸・櫻戀御守","縁結び 水みくじ":"結緣水籤",
+"さんちか（地下街）":"三宮地下街 Santica","神戸阪急（新館 神戸ロフト）":"神戶阪急百貨（新館 LOFT）","大丸神戸店":"大丸百貨 神戶店","三宮オーパ（B1 ドンキ）":"三宮 OPA 商場（B1 唐吉訶德）",
+"神戸マルイ":"神戶丸井百貨","ユニクロ 神戸三宮店":"UNIQLO 神戶三宮店","DAISO 三宮センター街店":"大創 三宮中央商店街店","ハンズ 三宮店":"HANDS 生活雜貨 三宮店","アニメイト三宮":"Animate 動漫專賣 三宮店",
+"大丸心斎橋店 本館":"大丸百貨 心齋橋店 本館","心斎橋筋商店街":"心齋橋筋商店街","なんばウォーク（地下街）":"難波 Walk 地下街",
+"金運大金守り・宝づくし守り":"金運大金御守・寶盡御守","御金みくじ・銀杏繪馬":"御金籤・銀杏繪馬",
+"三木鶏卵":"三木雞卵（高湯玉子燒）","田中鶏卵":"田中雞卵（玉子燒）","こんなもんじゃ":"豆乳甜甜圈專賣","鮮魚木村":"木村鮮魚（海鮮串）","錦 魚力":"錦 魚力（海鮮炸物）","鳥清":"鳥清 雞肉串",
+"カリカリ博士":"脆脆博士 章魚燒","櫂 KAI":"櫂 章魚蛋","錦一葉":"錦一葉 鯛魚燒","花よりキヨエ":"花より清江 可樂餅","SNOOPY茶屋 京都・錦店":"史努比茶屋 京都錦店","にしきギョーザ":"錦餃子",
+"元蔵":"元藏 湯葉烏龍麵","打田漬物 錦小路店":"打田醬菜 錦小路店","七味家本舗":"七味家本舖（七味粉）","マールブランシュ 清水坂店":"Malebranche 茶之菓 清水坂店",
+"元祖八ッ橋 西尾":"元祖八橋 西尾（生八橋）","おちゃのこさいさい 産寧坂本店":"舞妓辣油 產寧坂本店","京都蒟蒻しゃぼん 清水本店":"京都蒟蒻手工皂 清水本店","港屋":"港屋 黑玉和菓子",
+"Starbucks 京都二寧坂ヤサカ茶屋店":"星巴克 二寧坂八坂茶屋店","%ARABICA 京都東山":"%ARABICA 咖啡 京都東山",
+"祢ざめ家":"祢ざめ家 稻荷壽司","総本家 宝玉堂":"總本家 寶玉堂 狐狸仙貝","寺子屋本舗 伏見店":"寺子屋本舖 濕仙貝","京豆庵 伏見稲荷店":"京豆庵 豆腐霜淇淋","稲荷茶寮":"稻荷茶寮 抹茶甜點",
+"千日前 はつせ":"千日前 初瀨大阪燒","千房 千日前本店":"千房大阪燒 千日前本店","串かつだるま 道頓堀店":"達摩炸串 道頓堀店",
+"551蓬莱・関空食堂・すし処 ほんまもん・たこ昌・龍旗信":"551蓬萊肉包・關空食堂・本物壽司・章魚昌・龍旗信拉麵","ぼてぢゅう（大阪燒）":"Botejyu 大阪燒",
+"Starbucks ノースゲート店":"星巴克 北門店","KIX DUTY FREE（中央穿越式主店）":"KIX 免稅店（中央主店）"
+};
+
+/* 每日清單：t=標題, items=打勾項目, shops=順路可買的店, tip=提醒 */
+const BASE_KIT=["護照","常備藥","日幣＋信用卡","衛生紙＋濕紙巾","飯店房卡","購物袋"];
+const CHECKS=[
+ [{t:"今天要做",items:["買行李箱（M coin's 心斎橋本店）","買 澪 MIO 氣泡清酒"]},
+  {t:"🍶 今天路線上可以買 澪 MIO 的店",items:[],
+   shops:[
+    ["Lawson 難波二丁目店","大阪市中央区難波2-2-3","24h","飯店同一排，回飯店前最方便"],
+    ["全家 難波一丁目店","大阪市中央区難波1-7-10","","味乃家附近"],
+    ["7-11 道頓堀2丁目店","大阪市中央区道頓堀2-2-9","24h","戎橋附近"],
+    ["唐吉訶德 道頓堀店","大阪市中央区宗右衛門町7-13","24h","買完行李箱可順便"],
+    ["唐吉訶德 道頓堀御堂筋店","大阪市中央区西心斎橋2-5-9","24h",""],
+    ["成城石井 なんばCITY店","大阪市中央区難波5-1-60 なんばCITY本館B2","10:00–22:00","超市，酒類比較齊"]],
+   tip:"官方寫「全國超市、超商都有賣」，通常在冷藏酒櫃；以上是路線會經過的店，沒有逐店確認庫存。買酒要滿 20 歲，結帳時可能要在螢幕按年齡確認。清酒是液體，回程要放托運行李。"}],
+ [{t:"出門前檢查",items:BASE_KIT}],
+ [{t:"出門前檢查",items:BASE_KIT}],
+ [{t:"出門前檢查",items:BASE_KIT}],
+ [{t:"出門前檢查",items:BASE_KIT},{t:"今天要做",items:["整理行李","確認 innn 有沒有傳隔天包車送機的司機資訊"]}],
+ [{t:"出門前檢查有沒有帶",items:["護照","手機","充電線","錢包（證件＋信用卡＋台幣）","日幣錢包"]},
+  {t:"👜 這些放在隨身包包",items:["常備藥","手機","護照","悠遊卡月票","台幣錢包","日幣錢包"]}]
+];
+
+/* 我的人像：img/me.png（換圖片就換人像） */
+/* 我的人像：img/me-d1.png ~ me-d6.png（每天配合角色的穿搭，換圖就換人像） */
+const ME_RATIO=273/460, meURI=i=>`img/me-d${i+1}.png`;
+const $=id=>document.getElementById(id);
+const NS="http://www.w3.org/2000/svg";
+const el=(tag,attrs={},parent)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e};
+const toMin=t=>{const[h,m]=t.split(":").map(Number);return h*60+m};
+const fmt=m=>{m=Math.round(m);const h=Math.floor(m/60)%24,mm=((m%60)+60)%60;return String(h).padStart(2,"0")+":"+String(mm).padStart(2,"0")};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const NARROW=innerWidth<600, W=NARROW?620:1000, H=NARROW?780:660, PAD=NARROW?80:95, FS=23, PIN=22, PAL=NARROW?70:78;
+
+/* 版面：真實經緯度 → 壓縮距離的示意座標，並把點推開 */
+function layout(d){
+  d.stops.forEach(s=>s.m=toMin(s.t));
+  const nodes=new Map();
+  d.stops.forEach(s=>{const k=s.ll.join(",");if(!nodes.has(k))nodes.set(k,{ll:s.ll,stops:[],label:s.s,icon:s.i});s.node=nodes.get(k);s.node.stops.push(s)});
+  const N=[...nodes.values()];
+  const lat0=N.reduce((a,n)=>a+n.ll[0],0)/N.length, lon0=N.reduce((a,n)=>a+n.ll[1],0)/N.length, c=Math.cos(lat0*Math.PI/180);
+  N.forEach(n=>{const x=(n.ll[1]-lon0)*c*111, y=-(n.ll[0]-lat0)*111, r=Math.hypot(x,y), r2=r?Math.pow(r,.22):0; n.x=r?x/r*r2:0; n.y=r?y/r*r2:0});
+  const fit=()=>{const xs=N.map(n=>n.x),ys=N.map(n=>n.y);const x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);
+    const TOP=100, sc=Math.min((W-PAD*2)/((x1-x0)||1),(H-PAD*2-TOP)/((y1-y0)||1)), ox=(W-(x1-x0)*sc)/2, oy=(H-(y1-y0)*sc)/2+TOP/2;
+    N.forEach(n=>{n.x=N.length>1?ox+(n.x-x0)*sc:W/2; n.y=N.length>1?oy+(n.y-y0)*sc:H/2})};
+  fit();
+  const MIN=Math.min(190,.95*Math.sqrt((W-PAD*2)*(H-PAD*2)/N.length));
+  for(let round=0;round<6;round++){
+    for(let it=0;it<220;it++){for(let i=0;i<N.length;i++)for(let j=i+1;j<N.length;j++){const a=N[i],b=N[j];let dx=b.x-a.x,dy=b.y-a.y,dd=Math.hypot(dx,dy);
+      if(dd<.01){dx=Math.cos(i+j);dy=Math.sin(i+j);dd=1}
+      if(dd<MIN){const p=(MIN-dd)/2*.5;dx/=dd;dy/=dd;a.x-=dx*p;a.y-=dy*p;b.x+=dx*p;b.y+=dy*p}}}
+    fit();
+  }
+  d._nodes=N;
+  d._segs=d.stops.map((s,i)=>{if(!i)return null;const a=d.stops[i-1].node,b=s.node;if(a===b)return null;
+    const mx=(a.x+b.x)/2,my=(a.y+b.y)/2,dx=b.x-a.x,dy=b.y-a.y,sg=i%2?1:-1;return{a,b,c:{x:mx-dy*.16*sg,y:my+dx*.16*sg}}});
+  placeLabels(d);
+  d._start=d.stops[0].m-20; d._end=d.stops[d.stops.length-1].m+40;
+}
+/* 標籤：試下、右、左、上四個位置，挑跟其他點/標籤重疊最少的 */
+const textW=s=>[...s].reduce((a,ch)=>a+(/[\x00-\x7F]/.test(ch)?.6:1.02),0)*FS;
+function placeLabels(d){
+  const boxes=d._nodes.map(n=>({x0:n.x-PIN-4,y0:n.y-PIN-4,x1:n.x+PIN+4,y1:n.y+PIN+4}));
+  const segBoxes=[];
+  const ov=(a,b)=>Math.max(0,Math.min(a.x1,b.x1)-Math.max(a.x0,b.x0))*Math.max(0,Math.min(a.y1,b.y1)-Math.max(a.y0,b.y0));
+  d._segs.forEach((g,i)=>{if(!g)return;const s=d.stops[i];if(!s.km)return;const txt=`${s.mode||""} ${s.km}km`.trim(),w=textW(txt)*19/FS;
+    let best=null,bs=1e18;
+    [.5,.38,.62,.28,.72].forEach((t,k)=>{const mp=bez(g,t),b={x0:mp.x-w/2-4,y0:mp.y-16,x1:mp.x+w/2+4,y1:mp.y+10};
+      let sc=k*20;segBoxes.forEach(o=>sc+=ov(b,o)*5);boxes.forEach(o=>sc+=ov(b,o)*5);
+      if(b.x0<4||b.x1>W-4)sc+=4e4;if(sc<bs){bs=sc;best={mp,b}}});
+    g.lbl={x:best.mp.x,y:best.mp.y+6,txt};segBoxes.push(best.b)});
+  const placed=[...segBoxes];
+  d._nodes.forEach((n,ni)=>{
+    const w=textW(n.label),h=FS+4;
+    const cands=[
+      {x:n.x,y:n.y+PIN+FS+4,a:"middle",b:{x0:n.x-w/2,y0:n.y+PIN+4,x1:n.x+w/2,y1:n.y+PIN+4+h}},
+      {x:n.x+PIN+8,y:n.y+8,a:"start",b:{x0:n.x+PIN+8,y0:n.y-h/2,x1:n.x+PIN+8+w,y1:n.y+h/2}},
+      {x:n.x-PIN-8,y:n.y+8,a:"end",b:{x0:n.x-PIN-8-w,y0:n.y-h/2,x1:n.x-PIN-8,y1:n.y+h/2}},
+      {x:n.x,y:n.y-PIN-10,a:"middle",b:{x0:n.x-w/2,y0:n.y-PIN-10-h+4,x1:n.x+w/2,y1:n.y-PIN-6}}];
+    let best=null,bs=1e18;
+    cands.forEach((c,k)=>{let sc=k*30;
+      boxes.forEach((b,bi)=>{if(bi!==ni)sc+=ov(c.b,b)*4});placed.forEach(b=>sc+=ov(c.b,b)*4);
+      if(c.b.x0<6||c.b.x1>W-6||c.b.y0<6||c.b.y1>H-6)sc+=5e4;
+      if(sc<bs){bs=sc;best=c}});
+    n.lbl=best;placed.push(best.b);
+  });
+}
+const bez=(g,t)=>{const u=1-t;return{x:u*u*g.a.x+2*u*t*g.c.x+t*t*g.b.x,y:u*u*g.a.y+2*u*t*g.c.y+t*t*g.b.y}};
+function stateAt(d,m){
+  const S=d.stops;
+  if(m<=S[0].m)return{p:S[0].node,idx:0,moving:false};
+  for(let i=0;i<S.length-1;i++){const b=S[i+1];
+    if(m<b.m){const g=d._segs[i+1];if(!g)return{p:S[i].node,idx:i,moving:false};
+      const gap=b.m-S[i].m,tr=Math.min(b.tr||Math.min(30,gap),gap),dep=b.m-tr;
+      if(m<dep)return{p:S[i].node,idx:i,moving:false};
+      const f=(m-dep)/tr,e=f<.5?2*f*f:1-((-2*f+2)**2)/2;return{p:bez(g,e),idx:i,moving:true,next:i+1,f:e}}}
+  return{p:S[S.length-1].node,idx:S.length-1,moving:false};
+}
+
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let VISITED=store.get("osaka-visited",{}), CHECKED=store.get("osaka-check",{});
+const saveV=()=>store.set("osaka-visited",VISITED), saveC=()=>store.set("osaka-check",CHECKED);
+let SHOW_ME=store.get("osaka-showme",true);
+function syncMeBtn(){const b=$("meBtn");b.setAttribute("aria-pressed",SHOW_ME?"true":"false");b.textContent=SHOW_ME?"👧＋角色":"只有角色";b.title=SHOW_ME?"點一下只顯示角色":"點一下顯示人物＋角色"}
+let dayIdx=0,hotelMode=false,cur=0,playing=false,speed=1,live=false,lastTs=0,segEls=[],pinEls=[],palEl=null;
+
+function renderTabs(){
+  const nav=$("days");nav.innerHTML="";
+  DAYS.forEach((d,i)=>{const b=document.createElement("button");b.type="button";b.className="day";b.setAttribute("role","tab");
+    b.innerHTML=`<img src="img/${DAY_PALS[i]}.png" alt=""><div><b>Day ${i+1}・${d.date.slice(5).replace("-","/")}（${d.wd}）</b><span>${esc(d.title)}</span></div>`;
+    b.onclick=()=>{setLive(false);selectDay(i)};nav.appendChild(b)});
+  const h=document.createElement("button");h.type="button";h.className="day";h.setAttribute("role","tab");
+  h.innerHTML=`<img src="img/${HOTEL_PAL}.png" alt=""><div><b>🏪 飯店周邊</b><span>超商・超市・藥妝・24h</span></div>`;
+  h.onclick=()=>{setLive(false);showHotel()};nav.appendChild(h);
+}
+function markTab(k){[...$("days").children].forEach((b,j)=>b.setAttribute("aria-selected",j===k?"true":"false"))}
+function selectDay(i,keepTime){
+  hotelMode=false;dayIdx=i;const d=DAYS[i];$("dayView").hidden=false;markTab(i);
+  $("dayTitle").textContent=`Day ${i+1}｜${d.title}`;$("dayArea").textContent=d.area;
+  $("slider").min=d._start;$("slider").max=d._end;$("leaderImg").src=`img/${DAY_PALS[i]}.png`;
+  if(!keepTime)cur=d._start;
+  pause();renderMap(d);renderList(d);renderChecklist(i);refreshVisited();
+  renderNear(`Day ${i+1} 附近可以去的地方`,NEAR_PAL,DAY_NEAR[i]||[]);
+  update();
+}
+function showHotel(){hotelMode=true;pause();$("dayView").hidden=true;markTab(DAYS.length);
+  renderNear(`飯店周邊（東横INN大阪なんば，步行 8 分內）`,HOTEL_PAL,HOTEL_NEAR);}
+function renderNear(title,pal,cats){
+  $("nearTitle").innerHTML=`<img src="img/${pal}.png" alt="">${esc(title)}`;
+  $("cats").innerHTML=cats.map(c=>`<div class="card cat"><h3>${esc(c.cat)}</h3><ul>${c.items.map(([n,a,h,nt])=>{
+    const is24=/24h/.test(h);const link=G(n.replace(/（.*?）/g,"")+" "+a);
+    const zh=ZH[n];const lines=(nt||"").split("｜").filter(Boolean);
+    const vid="n:"+n;
+    return `<li class="${VISITED[vid]?"visited":""}" data-vid="${esc(vid)}"><div class="nmrow"><div class="nm">${zh?esc(zh)+(/[\u3040-\u30fa\u30fc-\u30ff]/.test(n)?`<span class="jp">${esc(n)}</span>`:""):esc(n)}${h?`<span class="hr${is24?" h24":""}">${is24?"🌙 24h":esc(h)}</span>`:""}</div><label class="vck"><input type="checkbox" ${VISITED[vid]?"checked":""}>去過</label></div>${lines.length>1?`<ul class="fl">${lines.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:lines.length?`<div class="nt">${esc(lines[0])}</div>`:""}<div class="ds">${esc(a)}　<a class="mlink" href="${link}" target="_blank" rel="noopener">地圖 ↗</a></div></li>`}).join("")}</ul></div>`).join("");
+  $("cats").querySelectorAll("li[data-vid] .vck input").forEach(cb=>cb.onchange=()=>{const li=cb.closest("li");const id=li.dataset.vid;
+    if(cb.checked)VISITED[id]=1;else delete VISITED[id];saveV();li.classList.toggle("visited",cb.checked)});
+}
+function refreshVisited(){const d=DAYS[dayIdx];pinEls.forEach(({n,g})=>g.classList.toggle("visited",n.stops.some(st=>VISITED[`d${dayIdx}-s${d.stops.indexOf(st)}`])))}
+function renderChecklist(i){
+  const groups=CHECKS[i]||[];
+  $("ckBody").innerHTML=groups.map((g,gi)=>`<div class="ckg">${g.t?`<h3>${esc(g.t)}</h3>`:""}<ul>${g.items.map((t,k)=>{const id=`d${i}-g${gi}-${k}`;
+    return `<li><label class="ck${CHECKED[id]?" on":""}"><input type="checkbox" data-id="${id}" ${CHECKED[id]?"checked":""}>${esc(t)}</label></li>`}).join("")}</ul>
+    ${g.shops?`<div class="shops">${g.shops.map(([n,a,h,nt])=>`<div class="shop"><b>${esc(n)}</b>${esc(h)}${nt?"・"+esc(nt):""}<br>${esc(a)}　<a class="mlink" href="${G(n.replace(/（.*?）/g,"")+" "+a)}" target="_blank" rel="noopener">地圖 ↗</a></div>`).join("")}</div>`:""}
+    ${g.tip?`<p class="tip">💡 ${esc(g.tip)}</p>`:""}</div>`).join("");
+  const count=()=>{const all=$("ckBody").querySelectorAll("input"),on=[...all].filter(x=>x.checked).length;$("ckCount").textContent=`${on} / ${all.length}`};
+  $("ckBody").querySelectorAll("input").forEach(cb=>cb.onchange=()=>{if(cb.checked)CHECKED[cb.dataset.id]=1;else delete CHECKED[cb.dataset.id];saveC();cb.closest(".ck").classList.toggle("on",cb.checked);count()});
+  $("ckReset").onclick=()=>{Object.keys(CHECKED).forEach(k=>{if(k.startsWith(`d${i}-`))delete CHECKED[k]});saveC();renderChecklist(i)};
+  count();
+}
+function renderMap(d){
+  const svg=$("map");svg.innerHTML="";svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  const bg=el("g",{"aria-hidden":"true"},svg);
+  el("path",{d:`M-20 ${H*.8} C ${W*.18} ${H*.72}, ${W*.26} ${H*.93}, ${W*.46} ${H*.85} S ${W*.82} ${H*.72}, ${W+20} ${H*.82} L${W+20} ${H+20} L-20 ${H+20}Z`,fill:"var(--water)",opacity:".7"},bg);
+  [[.15,.2,95],[.86,.18,80],[.82,.7,70],[.12,.62,60],[.5,.48,140]].forEach(([x,y,r],k)=>el("circle",{cx:x*W,cy:y*H,r,fill:k%2?"var(--soft)":"var(--chip)",opacity:".8"},bg));
+  for(let k=0;k<26;k++){el("text",{x:(k*137)%W,y:(k*89)%(H-20)+14,"font-size":14,fill:"var(--accent)",opacity:".22"},bg).textContent=k%3?"✦":"♡"}
+  segEls=[];
+  const gs=el("g",{},svg),gl=el("g",{},svg);
+  d._segs.forEach((g,i)=>{if(!g){segEls.push(null);return}
+    const dstr=`M${g.a.x} ${g.a.y} Q${g.c.x} ${g.c.y} ${g.b.x} ${g.b.y}`;
+    el("path",{d:dstr,class:"seg-base"},gs);const w=el("path",{d:dstr,class:"seg-walk"},gs);const len=w.getTotalLength();
+    w.style.strokeDasharray=`0 ${len}`;segEls.push({w,len,i});
+    if(g.lbl)el("text",{x:g.lbl.x,y:g.lbl.y,"text-anchor":"middle",class:"seg-lbl"},gl).textContent=g.lbl.txt;
+  });
+  pinEls=[];
+  const gp=el("g",{},svg),gt=el("g",{},svg);
+  d._nodes.forEach(n=>{
+    const g=el("g",{class:"pin",transform:`translate(${n.x},${n.y})`},gp);
+    el("circle",{class:"ring",r:PIN,fill:"var(--accent)",opacity:0},g);
+    el("circle",{class:"dot",r:PIN},g);
+    el("text",{class:"emo","text-anchor":"middle",y:8},g).textContent=n.icon;
+    el("text",{class:"vb",x:PIN-4,y:-PIN+8},g).textContent="✓";
+    el("text",{class:"lbl",x:n.lbl.x,y:n.lbl.y,"text-anchor":n.lbl.a},gt).textContent=n.label;
+    pinEls.push({n,g});
+  });
+  const u=el("g",{},svg);
+  const hm=PAL*1.15, wm=hm*ME_RATIO, wc=PAL*1.0;
+  if(SHOW_ME){const x0=-(wm+wc-8)/2;
+    el("image",{href:meURI(dayIdx),x:x0,y:-hm,width:wm,height:hm,preserveAspectRatio:"xMidYMax meet"},u);
+    el("image",{href:`img/${DAY_PALS[dayIdx]}.png`,x:x0+wm-8,y:-wc,width:wc,height:wc,preserveAspectRatio:"xMidYMax meet"},u);
+  }else{
+    el("image",{href:`img/${DAY_PALS[dayIdx]}.png`,x:-wc/2,y:-wc,width:wc,height:wc,preserveAspectRatio:"xMidYMax meet"},u);
+  }
+  palEl=u;
+}
+function renderList(d){
+  const ol=$("stops");ol.innerHTML="";
+  d.stops.forEach((s,i)=>{const li=document.createElement("li");li.className="stop";li.dataset.i=i;
+    const link=s.map||(s.q?G(s.q+(s.addr?" "+s.addr:"")):(s.addr?G(s.addr):null));
+    const vid=`d${dayIdx}-s${i}`;li.dataset.vid=vid;li.classList.toggle("visited",!!VISITED[vid]);
+    li.innerHTML=`<div class="top"><span class="t">${s.t}</span><span class="n">${s.i} ${s.n}</span><label class="vck"><input type="checkbox" ${VISITED[vid]?"checked":""} aria-label="已去過">去過</label></div>`+
+      (s.go?`<div class="go">🚶 ${s.go}</div>`:"")+
+      ((s.addr||link||s.note)?`<div class="meta">${s.addr?s.addr+"　":""}${link?`<a class="mlink" href="${link}" target="_blank" rel="noopener">地圖 ↗</a>`:""}${s.note?`<br>💡 ${s.note}`:""}</div>`:"");
+    li.querySelector(".vck input").onchange=e=>{if(e.target.checked)VISITED[vid]=1;else delete VISITED[vid];saveV();li.classList.toggle("visited",e.target.checked);refreshVisited()};
+    li.onclick=e=>{if(e.target.closest("a")||e.target.closest(".vck"))return;setLive(false);pause();cur=s.m;update()};
+    ol.appendChild(li)});
+}
+function update(now=performance.now()){
+  if(hotelMode)return;
+  const d=DAYS[dayIdx];cur=Math.max(d._start,Math.min(d._end,cur));
+  $("clock").textContent=fmt(cur);$("slider").value=cur;
+  const st=stateAt(d,cur),S=d.stops;
+  let msg;if(cur<S[0].m)msg=`準備出發：${S[0].n}`;else if(st.moving)msg=`🐾 前往 ${S[st.next].s}${S[st.next].mode?`（${S[st.next].mode}）`:""}`;else msg=`${S[st.idx].i} ${S[st.idx].n}`;
+  if(cur>=d._end-1)msg+="・今天辛苦了！";
+  $("status").textContent=msg;
+  document.querySelectorAll(".stop").forEach(li=>{const i=+li.dataset.i,s=S[i];const isNow=!st.moving&&cur>=S[0].m&&i===st.idx;li.classList.toggle("now",isNow);li.classList.toggle("done",!isNow&&s.m<=cur&&i<=st.idx)});
+  const nowNode=!st.moving&&cur>=S[0].m?S[st.idx].node:null;
+  pinEls.forEach(({n,g})=>{g.classList.toggle("now",n===nowNode);g.classList.toggle("done",n!==nowNode&&n.stops.some(s=>s.m<=cur))});
+  segEls.forEach(p=>{if(!p)return;let f=0;if(st.idx>=p.i)f=1;else if(st.moving&&st.next===p.i)f=st.f;p.w.style.strokeDasharray=f>0?`${p.len*f} ${p.len}`:`0 ${p.len}`;p.w.style.opacity=f>0?.95:0});
+  if(palEl){const s2=stateAt(d,cur-.6);let bob=0;
+    if(!reduced)bob=st.moving?-Math.abs(Math.sin(now/120))*7:Math.sin(now/450)*2;
+    const dir=st.moving&&(st.p.x-s2.p.x)<-.05?-1:1;
+    palEl.setAttribute("transform",`translate(${st.p.x.toFixed(1)},${(st.p.y-PIN+6+bob).toFixed(1)}) scale(${dir},1)`)}
+}
+function loop(ts){if(!lastTs)lastTs=ts;const dt=Math.min(100,ts-lastTs);lastTs=ts;
+  if(playing&&!hotelMode){cur+=dt/1000*12*speed;if(cur>=DAYS[dayIdx]._end){cur=DAYS[dayIdx]._end;pause()}}
+  update(ts);requestAnimationFrame(loop)}
+function play(){const d=DAYS[dayIdx];if(cur>=d._end)cur=d._start;playing=true;$("playBtn").textContent="❚❚";$("playBtn").setAttribute("aria-label","暫停")}
+function pause(){playing=false;$("playBtn").textContent="▶";$("playBtn").setAttribute("aria-label","播放")}
+$("playBtn").onclick=()=>{setLive(false);playing?pause():play()};
+$("slider").oninput=e=>{setLive(false);pause();cur=+e.target.value;update()};
+$("speedBtn").onclick=()=>{speed=speed===1?2:speed===2?4:1;$("speedBtn").textContent="×"+speed};
+
+function tokyoNow(){const p=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Tokyo",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(new Date());
+  const g=t=>p.find(x=>x.type===t).value;return{date:`${g("year")}-${g("month")}-${g("day")}`,min:(+g("hour")%24)*60+ +g("minute")}}
+let liveTimer=null,toastT;
+function toast(t){const e=$("toast");e.textContent=t;e.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove("show"),3600)}
+function setLive(on){live=on;$("liveBtn").setAttribute("aria-pressed",on?"true":"false");clearInterval(liveTimer);
+  if(!on)return;const n=tokyoNow(),i=DAYS.findIndex(d=>d.date===n.date);
+  if(i<0){live=false;$("liveBtn").setAttribute("aria-pressed","false");toast(`現在日本時間 ${n.date.slice(5).replace("-","/")} ${fmt(n.min)}，旅程期間（10/29–11/03）才會即時對照，先按 ▶ 看模擬吧`);return}
+  selectDay(i,true);const tick=()=>{cur=tokyoNow().min;update()};tick();liveTimer=setInterval(tick,15000);toast(`已對照日本時間 ${fmt(cur)}`)}
+$("liveBtn").onclick=()=>setLive(!live);
+$("meBtn").onclick=()=>{SHOW_ME=!SHOW_ME;store.set("osaka-showme",SHOW_ME);syncMeBtn();if(!hotelMode){renderMap(DAYS[dayIdx]);refreshVisited();update()}};
+syncMeBtn();
+
+function setTheme(t){document.documentElement.dataset.theme=t;$("themeBtn").textContent=t==="lilac"?"切換粉紅花朵版":"切換紫色格子版";try{localStorage.setItem("osaka-theme",t)}catch(e){}}
+$("themeBtn").onclick=()=>setTheme(document.documentElement.dataset.theme==="lilac"?"pink":"lilac");
+try{const t=localStorage.getItem("osaka-theme");if(t)setTheme(t)}catch(e){}
+
+/* eSIM：只存在本機 */
+["esimAddr","esimCode","esimNote"].forEach(id=>{const inp=$(id);inp.value=store.get("osaka-"+id,"");inp.oninput=()=>store.set("osaka-"+id,inp.value)});
+document.querySelectorAll("[data-copy]").forEach(b=>b.onclick=async()=>{const v=$(b.dataset.copy).value;if(!v){toast("還沒有填");return}
+  try{await navigator.clipboard.writeText(v);toast("已複製")}catch(e){const t=$(b.dataset.copy);t.select();document.execCommand("copy");toast("已複製")}});
+/* 離線：用 service worker 把頁面和圖片存在手機裡（要放到 https 網址才會啟用） */
+if("serviceWorker" in navigator && (location.protocol==="https:"||location.hostname==="localhost")){navigator.serviceWorker.register("sw.js").catch(()=>{})}
+const netTag=()=>{$("offlineTag").hidden=navigator.onLine};addEventListener("online",netTag);addEventListener("offline",netTag);netTag();
+DAYS.forEach(layout);renderTabs();
+const today=tokyoNow().date,ti=DAYS.findIndex(d=>d.date===today);
+selectDay(ti<0?0:ti);
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
